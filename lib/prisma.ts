@@ -1,11 +1,12 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
 function getPrismaClient() {
-  const databaseUrl = process.env.DATABASE_URL;
+  const tursoUrl = process.env.TURSO_DATABASE_URL;
+  const databaseUrl = tursoUrl || process.env.DATABASE_URL;
   if (!databaseUrl || databaseUrl.startsWith('file:')) {
     return new PrismaClient();
   }
@@ -42,5 +43,4 @@ function extractTokenFromUrl(url: string): string | null {
 }
 
 export const prisma = globalForPrisma.prisma ?? getPrismaClient();
-
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
