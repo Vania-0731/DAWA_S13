@@ -44,10 +44,25 @@ export async function POST(request: Request) {
       { message: 'Usuario registrado exitosamente' },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error en registro:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
+    if (error?.message?.includes('URL_INVALID') || error?.message?.includes('undefined')) {
+      return NextResponse.json(
+        { error: 'Error de configuración de base de datos. Verifica las variables de entorno.' },
+        { status: 500 }
+      );
+    }
+    
+    if (error?.code === 'P2002') {
+      return NextResponse.json(
+        { error: 'Este email ya está registrado' },
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
-      { error: 'Error al registrar usuario' },
+      { error: error?.message || 'Error al registrar usuario. Verifica la configuración de la base de datos.' },
       { status: 500 }
     );
   }
