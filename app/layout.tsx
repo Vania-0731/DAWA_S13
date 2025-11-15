@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import "../src/app/globals.css";
+import "./globals.css";
 import Link from "next/link";
 import LogoutButton  from "./components/LogoutButton";
 import { getServerSession } from "next-auth/next";
@@ -27,7 +27,7 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const session = await getServerSession(authOptions);
-    console.log(session)
+    
     return (
         <html lang="en">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>

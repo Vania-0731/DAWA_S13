@@ -17,8 +17,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get('registered') === 'true') {
-    }
     const errorParam = searchParams.get('error');
     if (errorParam) {
       setError(decodeURIComponent(errorParam));
@@ -68,11 +66,12 @@ export default function LoginPage() {
   };
 
   const handleGitHubSignIn = async () => {
+    setError('');
     try {
       await signIn('github', {
         callbackUrl: '/dashboard',
       });
-    } catch (err) {
+    } catch (err: any) {
       setError('Error al iniciar sesión con GitHub');
     }
   };
