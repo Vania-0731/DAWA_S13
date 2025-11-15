@@ -5,15 +5,19 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function getPrismaClient() {
-  const tursoUrl = process.env.TURSO_DATABASE_URL;
-  const databaseUrl = tursoUrl || process.env.DATABASE_URL;
-  
-  if (!databaseUrl || databaseUrl === 'undefined' || databaseUrl.trim() === '') {
+  const tursoUrl = process.env.TURSO_DATABASE_URL?.trim();
+  const databaseUrlEnv = process.env.DATABASE_URL?.trim();
+  const databaseUrl = tursoUrl || databaseUrlEnv;
+  console.log('🔍 Checking database URLs:');
+  console.log('TURSO_DATABASE_URL:', tursoUrl ? `✅ "${tursoUrl.substring(0, 30)}..."` : '❌ not set or empty');
+  console.log('DATABASE_URL:', databaseUrlEnv ? `✅ "${databaseUrlEnv.substring(0, 30)}..."` : '❌ not set or empty');
+  console.log('Selected URL:', databaseUrl ? `✅ "${databaseUrl.substring(0, 30)}..."` : '❌ none');
+  if (!databaseUrl || databaseUrl === 'undefined' || databaseUrl === '') {
     console.error('❌ DATABASE_URL or TURSO_DATABASE_URL is not set');
     console.error('TURSO_DATABASE_URL:', process.env.TURSO_DATABASE_URL ? '✅ set' : '❌ not set');
     console.error('DATABASE_URL:', process.env.DATABASE_URL ? '✅ set' : '❌ not set');
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('DATABASE_URL or TURSO_DATABASE_URL must be set in production environment');
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+      throw new Error('DATABASE_URL or TURSO_DATABASE_URL must be set in production environment. Check Vercel environment variables.');
     }
     return new PrismaClient();
   }
