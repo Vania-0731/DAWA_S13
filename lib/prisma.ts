@@ -65,5 +65,33 @@ function extractTokenFromUrl(url: string): string | null {
   }
 }
 
-export const prisma = globalForPrisma.prisma ?? getPrismaClient();
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+let prismaInstance: PrismaClient | null = null;
+function getPrismaInstance() {
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    throw new Error('Prisma client should not be initialized during build phase');
+  }
+  
+  if (!prismaInstance) {
+    if (globalForPrisma.prisma) {
+      prismaInstance = globalForPrisma.prisma;
+    } else {
+      prismaInstance = getPrismaClient();
+      if (process.env.NODE_ENV !== 'production') {
+        globalForPrisma.prisma = prismaInstance;
+      }
+    }
+  }
+  return prismaInstance;
+}
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    try {
+      return getPrismaInstance()[prop as keyof PrismaClient];
+    } catch (error) {
+      if (process.env.NEXT_PHASE === 'phase-production-build') {
+        return () => {};
+      }
+      throw error;
+    }
+  },
+});
