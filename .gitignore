@@ -25,6 +25,7 @@ yarn-error.log*
 # Local env files
 .env*.local
 .env
+!.env.example
 
 # Vercel
 .vercel
@@ -38,8 +39,6 @@ next-env.d.ts
 /prisma/dev.db-journal
 *.db
 *.db-journal
-# Las migraciones SÍ deben subirse (contienen el schema SQL)
-# /prisma/migrations/ NO está aquí porque queremos que se suba
 
 # IDE
 .vscode/

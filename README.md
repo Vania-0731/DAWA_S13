@@ -38,10 +38,16 @@ npm install
 
 ### 3. Configurar variables de entorno
 
-Crea un archivo `.env.local` en la raíz del proyecto con las siguientes variables:
+Copia el archivo `.env.example` a `.env.local`:
+
+```bash
+cp .env.example .env.local
+```
+
+Luego edita `.env.local` y reemplaza los valores de ejemplo con tus credenciales reales:
 
 ```env
-# Database
+# Database (para desarrollo local)
 DATABASE_URL="file:./dev.db"
 
 # NextAuth
